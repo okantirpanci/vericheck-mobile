@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="tr"><head><meta charset="utf-8"><title>VeriCheck</title>
+<meta name="theme-color" content="#e4f6cf"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./icons/icon-192.png"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#fff;--card:#eef3fb;--bd:#c9d6ee;--tx:#0b1f44;--mu:#475a7d;--bl:#1d4ed8;--nv:#0b2a5b;--rd:#b42318;--rdb:#fde8e8;--am:#8a5a00;--amb:#fff4d6;--gn:#1a7f45;--gnb:#e3f6ea;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1526;--card:#16213a;--bd:#2c3b5e;--tx:#e6ecfa;--mu:#9fb0d3;--bl:#6c9bff;--nv:#9db8ff;--rd:#ff9a8f;--rdb:#3a1d1f;--am:#ffd27a;--amb:#3a2f14;--gn:#7ee0a3;--gnb:#143324;color-scheme:dark}}
+html{height:100%}body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,Segoe UI,Arial,sans-serif;line-height:1.5}
+main{max-width:1000px;margin:auto;padding:12px 16px 40px}
+nav{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 18px}
+nav button,.btn{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:8px 12px;cursor:pointer;font:inherit}
+nav button.on,.btn.pri{background:var(--bl);color:#fff;border-color:var(--bl)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+h1{font-size:2.6rem;letter-spacing:2px;color:var(--nv);margin:.2em 0 0}h2{color:var(--nv)}
+.q{font-size:1.5rem;font-weight:700;color:var(--bl)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px 16px;margin:10px 0}
+.flow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.flow .card{flex:1;min-width:180px;border-top:5px solid var(--bl)}
+.info{background:var(--card);border-left:5px solid var(--bl);padding:10px 14px;border-radius:6px;margin:10px 0}
+.warn{background:var(--amb);color:var(--am);border-left:5px solid var(--am);padding:10px 14px;border-radius:6px;margin:10px 0}
+.err{background:var(--rdb);color:var(--rd);padding:8px 12px;border-radius:6px;margin:6px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.m{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px;text-align:center}.m b{display:block;font-size:1.7rem;color:var(--nv)}
+.chip{display:inline-block;padding:2px 10px;border-radius:99px;font-weight:600;font-size:.85rem}
+.red{background:var(--rdb);color:var(--rd)}.amber{background:var(--amb);color:var(--am)}.green{background:var(--gnb);color:var(--gn)}
+.pair{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:12px;align-items:center;border:1px solid var(--bd);border-radius:12px;padding:10px;margin:10px 0}
+.pair img{width:100%;max-height:180px;object-fit:contain;border-radius:8px;background:var(--card)}
+.th{display:flex;flex-wrap:wrap;gap:8px}.th figure{margin:0;width:100px;font-size:.7rem;word-break:break-all}.th img{width:100px;height:80px;object-fit:cover;border-radius:6px}
+.bars{display:flex;align-items:flex-end;gap:2px;height:140px;border-bottom:2px solid var(--bd)}.bars div{flex:1;background:var(--bl);min-width:3px}
+.lbl{display:flex;justify-content:space-between;font-size:.8rem;color:var(--mu)}
+table{border-collapse:collapse;width:100%}td,th{border:1px solid var(--bd);padding:5px 9px;text-align:left}th{background:var(--card)}
+textarea,input[type=text],input[type=number],select{width:100%;box-sizing:border-box;background:var(--bg);color:var(--tx);border:1px solid var(--bd);border-radius:6px;padding:6px;font:inherit}
+.tab{display:none}.tab.on{display:block}.cap{color:var(--mu);font-size:.9rem}
+@media(max-width:640px){.pair{grid-template-columns:1fr}h1{font-size:2rem}}
+
+/* VeriCheck Mobile: dokunmatik, erişilebilir, uyarlanabilir arayüz */
+:root{--bg:#f5f8ff;--card:#fff;--bd:#e3eaf7;--tx:#132849;--mu:#6a7b96;--bl:#3565ec;--nv:#102b61;--gn:#087f62;--gnb:#dff7ec;--amb:#fff2d7;--am:#956319;--rdb:#ffebed;--rd:#b43b47;color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d172b;--card:#172641;--bd:#30415f;--tx:#eef4ff;--mu:#a9b8d2;--bl:#81a5ff;--nv:#e3edff;--gn:#8be6bc;--gnb:#173b31;--amb:#40331e;--am:#ffdc95;--rdb:#42262c;--rd:#ff9ea5}}
+*{box-sizing:border-box}body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.5}main{max-width:1100px;padding:0 22px 90px}.apphead{display:flex;align-items:center;gap:12px;padding:20px 0 12px}.brandmark{width:48px;height:48px;display:grid;place-items:center;border-radius:16px;background:linear-gradient(140deg,#224bc5,#60a7ff);color:#fff;font-weight:900;font-size:23px;box-shadow:0 8px 20px #315ee536}.brandmark span{color:#8cf2d2}.apphead strong{display:block;letter-spacing:1.5px;font-size:17px;color:var(--nv)}.apphead small{display:block;color:var(--mu);font-size:11px}.offline-pill{margin-left:auto;border:1px solid var(--bd);border-radius:30px;padding:7px 10px;font-size:11px;color:var(--gn);background:var(--card)}nav{gap:8px;margin:10px 0 20px}nav button{border-radius:14px;font-size:13px;font-weight:650;padding:11px 14px}nav button.on{box-shadow:0 5px 15px #2e5ce326}.mobile-title{display:none}h1{font-size:clamp(2.4rem,6vw,4rem);letter-spacing:-1.8px}h2{font-size:clamp(1.45rem,4vw,2rem);letter-spacing:-.7px}.q{font-size:clamp(1.3rem,4vw,2rem)}.card,.m{border-radius:20px;box-shadow:0 6px 25px #173d6c0b}.card{padding:20px}.m{padding:20px}.m b{font-size:2rem}.grid{gap:14px}.info,.warn,.err{border-radius:14px;padding:14px}.hero-icon{display:grid;place-items:center;background:linear-gradient(145deg,#3b6ff6,#9cd7ff);width:72px;height:72px;border-radius:24px;color:#fff;font-size:42px;margin:12px 0}.upload-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.upload-card{background:var(--card);border:1px solid var(--bd);border-radius:24px;padding:25px;box-shadow:0 12px 30px #173d6c0b}.upload-card h3{margin:12px 0 4px;font-size:19px}.upload-card p{margin:0 0 22px;color:var(--mu);font-size:13px}.upload-symbol{width:58px;height:58px;display:grid;place-items:center;font-size:32px;border-radius:18px}.blue{background:#e8efff;color:#3565ec}.greenish{background:#dff7ed;color:#07956f}.action{display:block;text-align:center;cursor:pointer;border-radius:14px;padding:14px 12px;font-weight:700;font-size:14px;margin-top:10px;min-height:49px}.primary{background:#315fe5;color:#fff!important;border:1px solid #315fe5}.secondary{border:1px solid var(--bd);color:var(--tx);background:var(--bg)}.wide{width:100%;margin-top:18px;border:0}.quick-help{font-size:13px;color:var(--mu);margin:15px 0}.th{gap:12px}.th figure{width:100px}.th img{border-radius:12px;width:100px;height:90px}.pair{border-radius:20px;padding:16px;background:var(--card)}.pair img{border-radius:14px;max-height:230px}.btn{border-radius:12px;min-height:42px}.truth-list{max-height:450px;overflow:auto}.truth-row{display:flex;gap:12px;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bd);padding:12px 0;font-size:12px}.truth-row select{max-width:230px}.tab{animation:fade .22s ease}@keyframes fade{from{opacity:.4;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:680px){main{padding:0 16px 105px}.apphead{padding-top:14px}.apphead small{font-size:10px}.offline-pill{font-size:10px;padding:5px 7px}nav{position:fixed;bottom:0;left:0;right:0;z-index:20;display:flex;flex-wrap:nowrap;overflow-x:auto;gap:3px;margin:0;padding:8px 9px calc(9px + env(safe-area-inset-bottom));background:var(--card);border-top:1px solid var(--bd);box-shadow:0 -7px 25px #142b4d15;scrollbar-width:none}nav::-webkit-scrollbar{display:none}nav button{flex:0 0 auto;min-width:78px;max-width:110px;padding:8px 6px;font-size:10px;border:0;background:transparent;white-space:normal;line-height:1.3;min-height:52px}nav button.on{background:#315fe5;color:white;border-radius:12px}.mobile-title{display:block;font-size:12px;color:var(--mu);margin-bottom:6px}.upload-grid{grid-template-columns:1fr;gap:12px}.upload-card{padding:19px}.upload-card h3{font-size:17px}.upload-symbol{width:50px;height:50px}.pair{grid-template-columns:1fr 1fr}.pair>div:nth-child(2){grid-column:1/-1;grid-row:2}.pair img{height:145px;object-fit:cover}.flow .card{min-width:110px}.truth-row{flex-direction:column;align-items:stretch}.truth-row select{max-width:none}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.grid>.card{grid-column:span 2}.m{padding:13px}.m b{font-size:1.6rem}table{font-size:12px;display:block;overflow-x:auto}h2{margin-top:12px}}
+@media print{nav,.apphead,.mobile-title,.btn,.action,.upload-grid{display:none!important}main{padding:0}.tab{display:none!important}#t6{display:block!important}body{background:white;color:black}.card{box-shadow:none}}
+
+/* Botanical redesign: bright, touch-first, intentionally light */
+:root,:root:not([data-theme="light"]){--bg:#f7fbf5;--card:#fff;--bd:#e1ecdf;--tx:#193d2d;--mu:#698271;--bl:#249967;--nv:#194d37;--gn:#238956;--gnb:#e3f7e9;--amb:#fff3da;--am:#956315;--rdb:#ffebea;--rd:#ae4640;color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#f7fbf5;--card:#fff;--bd:#e1ecdf;--tx:#193d2d;--mu:#698271;--bl:#249967;--nv:#194d37;--gn:#238956;--gnb:#e3f7e9;--amb:#fff3da;--am:#956315;--rdb:#ffebea;--rd:#ae4640;color-scheme:light}}
+body{background:radial-gradient(circle at 95% 3%,#ecf9d8 0,transparent 26%),var(--bg);color:var(--tx)}
+.apphead{padding:18px 0}.brandmark{background:linear-gradient(140deg,#2eaa72,#9bdb59);box-shadow:0 8px 18px #3caa6b27;border-radius:15px}.brandmark span{color:#f0ffce}.offline-pill{background:#e7f7e8;color:#26865a;border:0;font-weight:700}
+nav button.on,.btn.pri,.action.primary,.primary{background:#278f60!important;border-color:#278f60!important;color:#fff!important}nav button.on{box-shadow:0 5px 15px #278f6028}
+nav button{display:flex;align-items:center;gap:6px;justify-content:center}nav button .nav-ico{font-size:19px;line-height:1}
+h1,h2,.q{color:#1b5539}.card,.m,.upload-card{box-shadow:0 7px 23px #356d3510;border-color:#e2eee0}.card{background:#fff}.upload-card:first-child{background:linear-gradient(155deg,#f0fbe7,#fff 55%)}.upload-card:nth-child(2){background:linear-gradient(155deg,#e5f8f2,#fff 55%)}.upload-symbol.blue{background:#ddf3c5;color:#2d955d}.upload-symbol.greenish{background:#d3f5e7;color:#278f60}.bars div{background:linear-gradient(0deg,#35a16b,#a6df78)}.btn,.action,.hero-cta,.tile{touch-action:manipulation}
+.nature-hero{position:relative;display:flex;overflow:hidden;min-height:300px;background:linear-gradient(120deg,#e4f6cf 0%,#c5eab2 55%,#a7dca4 100%);border-radius:30px;padding:35px 32px;margin:12px 0 25px}.hero-copy{position:relative;z-index:2;max-width:70%}.eyebrow{display:inline-block;background:#ffffff9e;border:1px solid #ffffffb5;color:#31744c;border-radius:50px;padding:7px 12px;font-size:11px;font-weight:800;letter-spacing:.6px}.nature-hero h1{font-size:clamp(27px,4.6vw,51px);line-height:1.13;letter-spacing:-1.5px;margin:19px 0 12px;color:#1b5539}.nature-hero h1 em{font-style:normal;color:#2b995e}.nature-hero p{font-size:14px;color:#427452;margin:0 0 22px}.hero-cta{border:0;border-radius:15px;padding:14px 18px;background:#1d754d;color:white;font-weight:800;cursor:pointer;font-size:14px}.hero-cta span{margin-left:18px}.leaf-art{position:absolute;width:240px;right:2%;top:18px;filter:drop-shadow(0 14px 17px #477d4830)}.leaf-art svg{width:100%}
+.section-kicker{display:flex;justify-content:space-between;align-items:center;margin:22px 0 12px;font-size:12px;font-weight:900;letter-spacing:1.3px;color:#2c6d48}.section-kicker span{font-size:11px;font-weight:500;letter-spacing:0;color:#77917a}.action-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.tile{position:relative;text-align:left;border:0;border-radius:23px;padding:20px;min-height:160px;display:flex;flex-direction:column;align-items:flex-start;cursor:pointer;color:#1f5239;transition:transform .15s}.tile:active{transform:scale(.98)}.tile-lime{background:#e4f4cb}.tile-mint{background:#d8f3e8}.tile-peach{background:#fff0d9}.tile-icon{display:grid;place-items:center;font-size:28px;background:#ffffffa8;width:48px;height:48px;border-radius:16px;margin-bottom:15px}.tile strong{font-size:17px}.tile small{font-size:12px;margin-top:3px;color:#64816a}.tile-arrow{position:absolute;right:17px;top:20px;font-size:20px}.dashboard-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.dashboard-stats>div{background:#fff;border:1px solid #e3eee0;border-radius:20px;padding:17px 20px;display:flex;flex-direction:column;gap:4px}.dashboard-stats span{color:#6c8a73;font-size:13px}.dashboard-stats strong{font-size:30px;color:#225a3d;line-height:1.2}.experiment-strip{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #e2eee0;border-radius:20px;padding:15px;margin-top:17px}.experiment-icon{display:grid;place-items:center;width:48px;height:48px;background:#e7f7e3;border-radius:14px;font-size:24px}.experiment-strip div{flex:1;display:flex;flex-direction:column;gap:4px}.experiment-strip strong{font-size:14px}.experiment-strip small{font-size:11px;color:#78917d}.experiment-strip button{border:0;background:#e6f6e7;color:#2d905e;border-radius:12px;font-size:23px;width:42px;height:42px;cursor:pointer}.home-footnote{font-size:11px;color:#819682;text-align:center;margin:18px 0 0}
+input[type=range]{accent-color:#2c9b66}button:focus-visible,label:focus-within{outline:2px solid #269b6b;outline-offset:2px}
+@media(max-width:680px){main{padding-bottom:115px}.nature-hero{padding:25px 21px;min-height:280px;border-radius:25px}.hero-copy{max-width:78%}.nature-hero h1{font-size:31px}.nature-hero p{max-width:190px;font-size:12px}.leaf-art{width:150px;right:-30px;top:50px;opacity:.86}.eyebrow{font-size:9px;padding:6px 9px}.action-tiles{gap:8px}.tile{min-height:145px;padding:12px 10px;border-radius:18px}.tile-icon{font-size:23px;width:39px;height:39px;border-radius:12px;margin-bottom:13px}.tile strong{font-size:13px}.tile small{font-size:10px}.tile-arrow{top:11px;right:10px;font-size:15px}.dashboard-stats{gap:8px}.dashboard-stats>div{padding:12px;border-radius:15px}.dashboard-stats span{font-size:11px}.dashboard-stats strong{font-size:25px}nav{justify-content:flex-start}nav button{min-width:68px;flex:0 0 68px;max-width:none;display:flex;flex-direction:column;gap:4px;font-size:9px;padding:7px 3px}nav button .nav-ico{font-size:20px}nav button:nth-child(n+6){display:flex}nav button.on{background:#e3f5e5!important;color:#227a50!important;box-shadow:none}.experiment-strip small{font-size:10px}}
+@media(min-width:681px){.nature-hero{min-height:330px}}
+</style>
+<style>
+/* Öğrenci deneyimi v3 */
+body.student-mode main{max-width:850px;padding-bottom:112px}body.student-mode #nav,body.student-mode .mobile-title,body.student-mode .tab{display:none!important}
+body.student-mode #studentApp{display:block}#studentApp{display:none}
+.mode-switch{display:flex;gap:6px;align-items:center;margin:4px 0 18px;background:#e5f2e3;padding:5px;border-radius:16px}
+.mode-switch button{flex:1;border:0;border-radius:12px;background:transparent;padding:11px 6px;font-weight:800;color:#527b61;cursor:pointer;font-size:13px}
+.mode-switch button.active{background:#fff;color:#166b45;box-shadow:0 2px 12px #164b2515}
+.student-hero{border-radius:27px;background:linear-gradient(125deg,#e4f9cd,#c2ebd2);padding:22px;margin-bottom:18px;position:relative;overflow:hidden}
+.student-hero .mini{color:#30764c;font-size:11px;font-weight:800;letter-spacing:.7px}.student-hero h1{font-size:clamp(27px,5vw,39px);letter-spacing:-1px;margin:9px 0;line-height:1.16}.student-hero p{color:#456c53;margin:0;font-size:14px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:18px 0}.step{padding:10px 3px;text-align:center;background:#eef6eb;border-radius:13px;font-size:12px;color:#65816b;font-weight:750}.step.active{background:#2c9465;color:#fff}
+.student-panel{background:white;border:1px solid #deebdb;border-radius:24px;padding:18px;margin:12px 0;box-shadow:0 8px 25px #1a613a0a}
+.student-panel h2{font-size:22px;margin:0 0 5px}.student-panel p{font-size:13px;color:#65806c;margin:4px 0 14px}
+.student-pick{display:grid;grid-template-columns:1fr 1fr;gap:10px}.student-slot{background:#f1faed;border-radius:18px;padding:14px;min-width:0}.student-slot:nth-child(2){background:#e9f8f2}.student-slot strong{display:block;font-size:15px;margin:3px 0}.student-slot .count{font-size:25px;font-weight:850;color:#206d4b}.student-slot label{display:block;text-align:center;background:#288e60;color:white;padding:11px 6px;border-radius:12px;font-size:12px;font-weight:800;margin:9px 0 0;cursor:pointer}.student-slot label.camera{background:white;color:#247950;border:1px solid #b7d7c1}
+.student-action{border:0;background:#21895b;color:white;border-radius:15px;font-weight:850;padding:16px;width:100%;font-size:16px;cursor:pointer;margin-top:14px}.student-action:disabled{background:#aacbb4;cursor:not-allowed}.student-hint{font-size:12px;color:#6c8874;margin-top:12px}.student-results{display:grid;gap:13px}.student-result{border:1px solid #dfebdc;border-radius:19px;padding:13px;background:#fff}.student-result .photos{display:grid;grid-template-columns:1fr 1fr;gap:10px}.student-result img{width:100%;height:135px;object-fit:cover;border-radius:12px;background:#f1f5ec}.student-result .photo-label{font-size:11px;font-weight:800;color:#5c7e67}.student-result h3{font-size:16px;margin:13px 0 5px}.student-result .meta{font-size:12px;color:#5c7966;margin-bottom:10px}.student-result select{width:100%;font-size:13px;padding:12px;border-radius:11px;border:1px solid #bddac4;background:#f7fbf5;color:#22533b}.student-result .result-pill{display:inline-block;padding:5px 10px;border-radius:99px;background:#e9f7e5;color:#226f49;font-size:12px;font-weight:800}.student-result .result-pill.alert{background:#fff0d8;color:#94601a}
+.student-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.student-summary div{background:#eaf6e9;border-radius:14px;text-align:center;padding:12px 5px;font-size:11px;color:#456c53}.student-summary b{display:block;font-size:26px;color:#1b6645}.student-hidden{display:none!important}
+@media(max-width:420px){.student-hero{padding:19px}.student-panel{padding:14px}.student-slot{padding:11px}.student-slot label{font-size:11px}.student-result img{height:120px}}
+</style>
+</head><body><main>
+<header class="apphead"><div class="brandmark">V<span>✓</span></div><div><strong>VERICHECK</strong><small>Görüntü güvenilirliği laboratuvarı</small></div><span class="offline-pill" id="net">● Hazır</span></header><nav id="nav"></nav><div class="mobile-title" id="mobileTitle"></div>
+
+
+<div class="mode-switch" aria-label="Kullanım modu"><button id="studentModeBtn" class="active" type="button">🌿 Öğrenci Modu</button><button id="researchModeBtn" type="button">⚙ Araştırmacı Modu</button></div>
+<div id="studentApp">
+ <div class="student-hero"><div class="mini">TÜBİTAK 2204-B · VERICHECK</div><h1>Yaprakların izini keşfet.</h1><p>Fotoğraf ekle, karşılaştır, sonucu incele.</p></div>
+ <div class="steps"><div class="step active" id="st1">1 · Fotoğraf</div><div class="step" id="st2">2 · Karşılaştır</div><div class="step" id="st3">3 · Keşfet</div></div>
+ <div class="student-panel" id="studentInput"><h2>Yapraklarını ekle</h2><p>Eğitim ve test fotoğraflarını seç.</p>
+ <div class="student-pick"><div class="student-slot"><div>🌱</div><strong>Eğitim</strong><span class="count" id="sTrain">0</span><label for="ftr">＋ Galeriden ekle</label><label class="camera" for="ctr">◎ Fotoğraf çek</label></div><div class="student-slot"><div>🍃</div><strong>Test</strong><span class="count" id="sTest">0</span><label for="fte">＋ Galeriden ekle</label><label class="camera" for="cte">◎ Fotoğraf çek</label></div></div>
+ <div class="student-hint" id="sUploadHint">İki gruba da en az bir fotoğraf ekle.</div><button class="student-action" id="sAnalyze" disabled>Yaprakları karşılaştır →</button><button class="student-action" id="sClear" style="background:#eff6ed;color:#286949;margin-top:9px;font-size:13px">Fotoğrafları temizle</button></div>
+ <div id="studentOutput" class="student-hidden"><div class="student-panel"><h2>Keşfettiklerin</h2><p>Uyarılar kesin karar değildir. Görselleri inceleyerek doğrula.</p><div class="student-summary" id="sSummary"></div><div id="sPairs" class="student-results" style="margin-top:15px"></div><button class="student-action" id="sAgain">＋ Yeni fotoğraf ekle</button><button class="student-action" id="sReport" style="background:#e9f5e8;color:#246e4a">Araştırma raporuna geç</button></div></div>
+</div>
+<section class="tab" id="t0">
+<div class="nature-hero"><div class="hero-copy"><span class="eyebrow">🌿 TÜBİTAK 2204-B · YAZILIM</span><h1>Yaprağın izini<br><em>birlikte inceleyelim.</em></h1><p>Fotoğrafını ekle, benzerlikleri keşfet.</p><button class="hero-cta" onclick="show(1)">＋ Fotoğraf ekle <span>↗</span></button></div><div class="leaf-art" aria-hidden="true"><svg viewBox="0 0 220 240"><defs><linearGradient id="leafg" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#4baf6b"/><stop offset="1" stop-color="#b4ec7a"/></linearGradient></defs><path d="M31 196C12 112 86 19 201 17c5 123-54 199-170 179Z" fill="url(#leafg)"/><path d="M29 197C81 155 129 97 201 17" fill="none" stroke="#e6ffd1" stroke-width="5"/><path d="M80 162 66 104M112 125l-5-74M143 89l31 17M93 147l66 19" fill="none" stroke="#e6ffd1" stroke-width="3" opacity=".8"/><circle cx="177" cy="177" r="25" fill="#fff" opacity=".95"/><path d="m165 178 9 9 16-20" stroke="#31945b" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+<div class="section-kicker">HIZLI BAŞLANGIÇ <span>3 adımda incele</span></div>
+<div class="action-tiles"><button class="tile tile-lime" onclick="show(1)"><span class="tile-icon">📷</span><strong>Fotoğraf ekle</strong><small>Kamera veya galeri</small><span class="tile-arrow">↗</span></button><button class="tile tile-mint" onclick="show(2)"><span class="tile-icon">◎</span><strong>Analiz et</strong><small>Benzerlikleri tara</small><span class="tile-arrow">↗</span></button><button class="tile tile-peach" onclick="show(3)"><span class="tile-icon">▣</span><strong>Sonuçları gör</strong><small>Çiftleri karşılaştır</small><span class="tile-arrow">↗</span></button></div>
+<div class="section-kicker">ÇALIŞMA ALANI <span id="homeState">Henüz fotoğraf yok</span></div>
+<div class="dashboard-stats"><div><span>🌱 Eğitim</span><strong id="homeTrain">0</strong></div><div><span>🍃 Test</span><strong id="homeTest">0</strong></div><div><span>🔎 Çift</span><strong id="homePairs">0</strong></div></div>
+<div class="experiment-strip"><span class="experiment-icon">🔬</span><div><strong>Bilimsel inceleme</strong><small>Aynı fotoğraf · Aynı yaprak · Farklı yaprak</small></div><button onclick="show(5)" aria-label="Doğrulama ekranına git">→</button></div>
+<p class="home-footnote">VeriCheck hastalık teşhisi yapmaz; görüntü benzerliğini inceler.</p>
+</section>
+
+<section class="tab" id="t1"><h2>Veri Setini Yükle</h2>
+<p class="cap">Biçimler: .jpg, .jpeg, .png (en fazla 10 MB). Dosya adı SINIF_YAPRAKID_FOTOID.jpg düzenindeyse (ör. A_L001_P01.jpg) sınıf, yaprak ve fotoğraf otomatik ayrılır; değilse de çalışır. Görüntüler bilgisayarınızdan dışarı gönderilmez.</p>
+<div class="upload-grid"><div class="upload-card"><div class="upload-symbol blue">▧</div><h3>Eğitim fotoğrafları</h3><p>Modelin öğrenirken gördükleri</p><label class="action primary">＋ Galeriden ekle<input type="file" id="ftr" multiple accept="image/jpeg,image/png" hidden></label><label class="action secondary">◎ Fotoğraf çek<input type="file" id="ctr" accept="image/*" capture="environment" hidden></label></div><div class="upload-card"><div class="upload-symbol greenish">◫</div><h3>Test fotoğrafları</h3><p>Modeli sınamak için kullanılanlar</p><label class="action primary">＋ Galeriden ekle<input type="file" id="fte" multiple accept="image/jpeg,image/png" hidden></label><label class="action secondary">◎ Fotoğraf çek<input type="file" id="cte" accept="image/*" capture="environment" hidden></label></div></div><div class="quick-help">ⓘ Aynı fiziksel yaprağın farklı çekimlerini karşılaştırmak için fotoğrafları iki gruba ayrı ayrı ekleyin.</div>
+<div id="upmsg"></div><div id="upinfo"></div><button class="action primary wide" id="toAnalysis" onclick="show(2)">Analize geç →</button></section>
+
+<section class="tab" id="t2"><h2>Benzerlik Analizi</h2><div id="anbox"></div></section>
+<section class="tab" id="t3"><h2>Şüpheli Görüntüler</h2><div id="susp"></div></section>
+
+<section class="tab" id="t4"><h2>Deney Karşılaştırması</h2>
+<div class="info">VeriCheck bir sınıflandırma modeli değildir. Model başarılarını deney sonunda kendi modelinizden elde edip elle girin.</div>
+<div class="grid"><label>Koşul A başarı oranı (%)<input type="number" id="cA" min="0" max="100" step="0.1"></label>
+<label>Koşul B başarı oranı (%)<input type="number" id="cB" min="0" max="100" step="0.1"></label>
+<label>Koşul C başarı oranı (%)<input type="number" id="cC" min="0" max="100" step="0.1"></label></div>
+<div id="cchart"></div></section>
+
+<section class="tab" id="t5"><h2>Yazılımı Test Et</h2><div id="valbox"></div></section>
+
+<section class="tab" id="t6"><h2>Rapor</h2><div id="rep"></div>
+<div class="card"><b>Projenin Geliştirilmesi (yapay zekâ kullanım şeffaflığı)</b>
+<p class="cap">Öğrenci doldurur. Boş kalanlar raporda “doldurulmadı” görünür.</p>
+<label>Kullanılan yapay zekâ aracı<input type="text" id="aiT"></label>
+<p>Kullanım amacı:<br><span id="aiP"></span></p><p>Öğrencinin katkısı:<br><span id="aiC"></span></p>
+<label>Ek not<textarea id="aiN" rows="2"></textarea></label></div></section>
+
+<section class="tab" id="t7"><h2>VeriCheck’in İçinde Ne Oluyor?</h2><div id="how"></div></section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ST={E:'Birebir aynı',H:'Benzerlik yüksek olabilir – inceleyin',M:'Orta düzey benzerlik',N:'Belirgin benzerlik görülmedi'};
+const TA='Aynı görüntü',TB='Aynı fiziksel yaprak – farklı çekim',TC='Farklı fiziksel yaprak';
+let tr=[],te=[],rows=null,hi=10,mid=16,inclMid=false,page=1,filt=0,ev=null;let currentTab=0;
+const TABS=['Ana Sayfa','Veri Setini Yükle','Benzerlik Analizi','Şüpheli Görüntüler','Deney Karşılaştırması','Yazılımı Test Et','Rapor','Bu Nasıl Çalışıyor?'];
+function show(i){currentTab=i;updateHome();document.getElementById('mobileTitle').textContent=TABS[i];TABS.forEach((_,k)=>{$('t'+k).classList.toggle('on',k==i);$('nav').children[k].classList.toggle('on',k==i)});
+ [,,drawAn,drawSusp,drawCond,drawVal,drawRep][i]?.();window.scrollTo(0,0)}
+const NAVICONS=['⌂','▧','◎','◫','▥','✓','▤','?'];const NAVSHORT=['Ana Sayfa','Fotoğraflar','Analiz','Eşleşmeler','Deney','Doğrula','Rapor','Rehber'];TABS.forEach((t,i)=>{const b=document.createElement('button');b.innerHTML=`<span class="nav-ico" aria-hidden="true">${NAVICONS[i]}</span><span>${NAVSHORT[i]}</span>`;b.title=t;b.setAttribute('aria-label',t);b.onclick=()=>show(i);$('nav').append(b)});
+
+function updateHome(){if(!$('homeTrain'))return;$('homeTrain').textContent=tr.length;$('homeTest').textContent=te.length;$('homePairs').textContent=tr.length*te.length;$('homeState').textContent=rows?'Analiz tamamlandı':tr.length&&te.length?'Analize hazır':tr.length+te.length?'Fotoğraf ekleniyor':'Henüz fotoğraf yok'}
+// ---- Dosya adı ayrıştırma ve gerçek durum önerisi ----
+function parse(n){const m=n.replace(/\.[^.]+$/,'').match(/^([^_\s]+)_(L\d+)_(P\d+)$/i);return m?[m[1],m[2],m[3]].map(x=>x.toUpperCase()):null}
+function sugg(a,b,ex){if(ex)return TA;if(!a.p||!b.p)return'';
+ if(a.p[0]==b.p[0]&&a.p[1]==b.p[1])return a.p[2]==b.p[2]?TA:TB;return TC}
+
+// ---- SHA-256 (dijital parmak izi) ve pHash (görsel parmak izi) ----
+async function sha(buf){return[...new Uint8Array(await crypto.subtle.digest('SHA-256',buf))].map(x=>x.toString(16).padStart(2,'0')).join('')}
+const N=32,DCT=Array.from({length:N},(_,k)=>Array.from({length:N},(_,i)=>Math.cos(Math.PI*(2*i+1)*k/(2*N))*(k?1:Math.SQRT1_2)*Math.sqrt(2/N)));
+function phash(bmp){ // 1 gri+32x32  2 DCT  3 sol-üst 8x8  4 ortanca eşiği -> 64 bit
+ const c=document.createElement('canvas');c.width=c.height=N;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,N,N);
+ g.imageSmoothingQuality='high';g.drawImage(bmp,0,0,N,N);const d=g.getImageData(0,0,N,N).data,p=[];
+ for(let y=0;y<N;y++){p[y]=[];for(let x=0;x<N;x++){const o=(y*N+x)*4;p[y][x]=.299*d[o]+.587*d[o+1]+.114*d[o+2]}}
+ const t=[];for(let k=0;k<8;k++){t[k]=[];for(let x=0;x<N;x++){let s=0;for(let y=0;y<N;y++)s+=DCT[k][y]*p[y][x];t[k][x]=s}}
+ const v=[];for(let k=0;k<8;k++)for(let l=0;l<8;l++){let s=0;for(let x=0;x<N;x++)s+=t[k][x]*DCT[l][x];v.push(s)}
+ const med=[...v].sort((a,b)=>a-b),m=(med[31]+med[32])/2;return v.map(x=>x>m?1:0)}
+const dist=(a,b)=>{let s=0;for(let i=0;i<64;i++)s+=a[i]^b[i];return s};
+
+async function load(files,arr,label){const msgs=[];arr.length=0;const used=new Set();
+ for(const f of files){const ext=(f.name.match(/\.[^.]+$/)||[''])[0].toLowerCase();
+  if(!['.jpg','.jpeg','.png'].includes(ext)){msgs.push(`${label}: “${f.name}” desteklenmeyen biçimde; atlandı.`);continue}
+  if(!f.size){msgs.push(`${label}: “${f.name}” boş dosya; atlandı.`);continue}
+  if(f.size>10485760){msgs.push(`${label}: “${f.name}” çok büyük (en fazla 10 MB); atlandı.`);continue}
+  try{const buf=await f.arrayBuffer(),bmp=await createImageBitmap(new Blob([buf],{type:f.type}));
+   let name=f.name,k=2;while(used.has(name)){name=f.name.replace(/(\.[^.]+)$/,` (${k++})$1`)}
+   if(name!=f.name)msgs.push(`${label}: “${f.name}” adı tekrar ediyor; “${name}” olarak kaydedildi.`);used.add(name);
+   arr.push({name,sha:await sha(buf),h:phash(bmp),url:URL.createObjectURL(f),p:parse(name),kb:f.size/1024,w:bmp.width,hh:bmp.height})}
+  catch(e){msgs.push(`${label}: “${f.name}” açılamadı, dosya bozuk olabilir; atlandı.`)}}
+ return msgs}
+async function onUp(){const m=[...await load($('ftr').files,tr,'Eğitim'),...await load($('fte').files,te,'Test')];rows=null;
+ $('upmsg').innerHTML=m.map(x=>`<div class="err">${esc(x)}</div>`).join('')+((tr.length&&!te.length)||(!tr.length&&te.length)?'<div class="warn">Analiz için hem eğitim hem test görüntüleri gerekir. Şu an yalnızca bir grup yüklü.</div>':'');
+ const list=(a,t)=>`<h3>${t} (${a.length})</h3><div class="th">${a.slice(0,30).map(r=>`<figure><img src="${r.url}"><figcaption>${esc(r.name)}</figcaption></figure>`).join('')}</div>${a.length>30?`<p class="cap">İlk 30 önizleme gösteriliyor.</p>`:''}`;
+ $('upinfo').innerHTML=(tr.length||te.length)?`<div class="grid"><div class="m"><b>${tr.length}</b>Eğitim görüntüsü</div><div class="m"><b>${te.length}</b>Test görüntüsü</div><div class="m"><b>${tr.length*te.length}</b>Toplam karşılaştırma</div></div><p class="cap">Toplam karşılaştırma = ${tr.length} × ${te.length}</p>`+list(tr,'Eğitim')+list(te,'Test'):''}
+$('ftr').onchange=async()=>{const a=[];const m=await load($('ftr').files,a,'Eğitim');tr.push(...a);rows=null;$('upmsg').innerHTML=m.map(x=>`<div class="err">${esc(x)}</div>`).join('');renderUploads();$('ftr').value='';updateHome()};$('fte').onchange=async()=>{const a=[];const m=await load($('fte').files,a,'Test');te.push(...a);rows=null;$('upmsg').innerHTML=m.map(x=>`<div class="err">${esc(x)}</div>`).join('');renderUploads();$('fte').value='';updateHome()};
+// Kamera ile çekilen fotoğraflar mevcut gruba eklenir; galeriden seçilenler korunur.
+async function cameraAdd(inputId,group,label){const f=$(inputId).files?.[0];if(!f)return;const old=group.slice();const fresh=[];const messages=await load([f],fresh,label);group.splice(0,group.length,...old,...fresh);rows=null;const errors=messages.map(x=>`<div class="err">${esc(x)}</div>`).join('');$('upmsg').innerHTML=errors;renderUploads();updateHome();$(inputId).value=''}
+function renderUploads(){const list=(a,t)=>`<h3>${t} (${a.length})</h3><div class="th">${a.slice(0,30).map(r=>`<figure><img src="${r.url}" alt="Fotoğraf"><figcaption>${esc(r.name)}</figcaption></figure>`).join('')}</div>`;$('upinfo').innerHTML=`<div class="grid"><div class="m"><b>${tr.length}</b>Eğitim</div><div class="m"><b>${te.length}</b>Test</div><div class="m"><b>${tr.length*te.length}</b>Karşılaştırma</div></div>${list(tr,'Eğitim')}${list(te,'Test')}`;}
+$('ctr').onchange=()=>cameraAdd('ctr',tr,'Eğitim');$('cte').onchange=()=>cameraAdd('cte',te,'Test');
+
+// ---- Analiz ----
+const status=r=>r.ex?'E':r.d<=hi?'H':r.d<=mid?'M':'N';
+const cls=s=>s=='N'?'green':s=='M'?'amber':'red';
+function drawAn(){const T=tr.length*te.length;let h='';
+ if(!tr.length||!te.length){$('anbox').innerHTML='<div class="info">Önce eğitim ve test görüntülerini yükleyin.</div>';return}
+ h+=`<p><b>Yapılacak karşılaştırma:</b> ${tr.length} × ${te.length} = <b>${T}</b></p>`;
+ if(T>500000)h+='<div class="err">500.000’den fazla karşılaştırma yapılamaz. Daha az görüntü yükleyin.</div>';else if(T>20000)h+='<div class="warn">Karşılaştırma sayısı büyük; biraz uzun sürebilir.</div>';
+ h+=`<div class="warn">Varsayılan eşikler yalnızca BAŞLANGIÇ / PİLOT değerleridir; bilimsel olarak doğrulanmış sabit bir eşik değildir. Kendi pilot denemelerinizle belirleyin.</div>
+ <div class="grid"><label>“Benzerlik yüksek olabilir” en büyük mesafe: <b id="hv">${hi}</b><input type="range" id="hs" min="0" max="32" value="${hi}"></label>
+ <label>“Orta düzey benzerlik” en büyük mesafe: <b id="mv">${mid}</b><input type="range" id="ms" min="0" max="40" value="${mid}"></label></div>
+ <p><button class="btn pri" id="go" ${T>500000?'disabled':''}>Analizi başlat</button> <progress id="pg" value="0" max="1" style="display:none;width:200px"></progress></p><div id="anres"></div>`;
+ $('anbox').innerHTML=h;
+ $('hs').oninput=e=>{hi=+e.target.value;if(mid<hi){mid=hi;$('ms').value=mid}$('hv').textContent=hi;$('mv').textContent=mid;res()};
+ $('ms').oninput=e=>{mid=Math.max(+e.target.value,hi);$('mv').textContent=mid;res()};
+ $('go').onclick=async()=>{const p=$('pg');p.style.display='';rows=[];
+  for(let i=0;i<tr.length;i++){for(let j=0;j<te.length;j++){const a=tr[i],b=te[j],ex=a.sha==b.sha;rows.push({a,b,ex,d:dist(a.h,b.h),sg:sugg(a,b,ex),gt:''})}
+   p.value=(i+1)/tr.length;await new Promise(r=>setTimeout(r))}p.style.display='none';res()};
+ if(rows)res()}
+function res(){if(!rows){return}const c={E:0,H:0,M:0,N:0};rows.forEach(r=>c[status(r)]++);
+ const mx=Math.max(20,...rows.map(r=>r.d))+1,bins=Array(mx).fill(0);rows.forEach(r=>bins[r.d]++);const bm=Math.max(...bins);
+ const near=te.map(b=>{let best=null;rows.forEach(r=>{if(r.b===b&&(!best||r.d<best.d))best=r});return best}).filter(Boolean).sort((x,y)=>x.d-y.d);
+ $('anres').innerHTML=`<div class="grid">${['E','H','M','N'].map(k=>`<div class="m"><b>${c[k]}</b>${ST[k]}</div>`).join('')}</div>
+ <h3>Görsel parmak izi mesafelerinin dağılımı</h3><div class="bars">${bins.map((n,i)=>`<div title="mesafe ${i}: ${n} çift" style="height:${n?Math.max(2,n/bm*100):0}%"></div>`).join('')}</div>
+ <div class="lbl"><span>0 (çok benzer)</span><span>${mx-1} (çok farklı)</span></div>
+ <p class="cap">Grafiğin sol tarafındaki değerler daha benzer görüntü çiftlerini, sağ tarafındaki değerler daha farklı görüntü çiftlerini gösterir.</p>
+ <details><summary>Her test görüntüsü için en benzer eğitim görüntüsü</summary><table><tr><th>Test</th><th>En benzer eğitim</th><th>Mesafe</th><th>Durum</th></tr>${near.map(r=>`<tr><td>${esc(r.b.name)}</td><td>${esc(r.a.name)}</td><td>${r.d}</td><td>${ST[status(r)]}</td></tr>`).join('')}</table></details>`}
+
+// ---- Şüpheli görüntüler ----
+function drawSusp(){const el=$('susp');if(!rows){el.innerHTML='<div class="info">Önce “Benzerlik Analizi” sekmesinde analizi başlatın.</div>';return}
+ let v=rows.filter(r=>filt==1?r.ex:filt==0?['E','H'].includes(status(r)):true).sort((x,y)=>x.d-y.d);const pp=8,pages=Math.max(1,Math.ceil(v.length/pp));page=Math.min(page,pages);
+ el.innerHTML=`<select id="fl"><option value="0">İncelenecek benzer görüntüler</option><option value="1">Yalnızca birebir aynı</option><option value="2">Tüm sonuçlar</option></select>
+ <p class="cap">${v.length} çift. “İncelenecek” = birebir aynı + benzerlik yüksek olabilir. Bu bir kesin karar değildir; kontrollü deney sonucu ile doğrulanmalıdır.</p>`+
+ (v.length?v.slice((page-1)*pp,page*pp).map(r=>`<div class="pair"><div><div class="cap">EĞİTİM</div><img src="${r.a.url}"><div class="cap">${esc(r.a.name)}</div></div>
+ <div><p><b>Birebir aynı mı?</b> ${r.ex?'Evet':'Hayır'}</p><p><b>Görsel parmak izi mesafesi:</b> ${r.d}</p><p><b>Durum:</b> <span class="chip ${cls(status(r))}">${ST[status(r)]}</span></p></div>
+ <div><div class="cap">TEST</div><img src="${r.b.url}"><div class="cap">${esc(r.b.name)}</div></div></div>`).join(''):'<div class="info">Bu filtreye uyan çift yok. Bu, benzerlik olmadığı anlamına gelmez; yalnızca seçilen eşiklerde belirgin benzerlik görülmediğini gösterir.</div>')+
+ `<p><button class="btn" id="pv">←</button> Sayfa ${page}/${pages} <button class="btn" id="nx">→</button></p>`;
+ $('fl').value=filt;$('fl').onchange=e=>{filt=+e.target.value;page=1;drawSusp()};$('pv').onclick=()=>{page=Math.max(1,page-1);drawSusp()};$('nx').onclick=()=>{page=Math.min(pages,page+1);drawSusp()}}
+
+// ---- Deney karşılaştırması ----
+function drawCond(){const v=['A','B','C'].map(k=>[k,$('c'+k).value]).filter(x=>x[1]!=='');
+ $('cchart').innerHTML=v.length?`<h3>Test Koşullarına Göre Ölçülen Model Başarısı</h3><div class="bars" style="height:200px;gap:30px;padding:0 20px">${v.map(([k,x])=>`<div style="height:${Math.min(100,+x)}%;position:relative"><span style="position:absolute;top:-22px;width:100%;text-align:center">%${(+x).toFixed(1)}</span></div>`).join('')}</div><div class="lbl" style="padding:0 20px">${v.map(([k])=>`<span style="flex:1;text-align:center">Koşul ${k}</span>`).join('')}</div>
+ <p class="cap">Bu grafik yalnızca kullanıcının deneyden elde ettiği sonuçları görselleştirir. VeriCheck bu başarı oranlarını üretmez.</p>`:'<p class="cap">Değer girdikçe grafik burada görünür.</p>'}
+['A','B','C'].forEach(k=>$('c'+k).oninput=drawCond);
+
+// ---- VeriCheck doğrulaması ----
+function evaluate(){const W=r=>['E','H'].concat(inclMid?['M']:[]).includes(status(r));let tp=0,fn=0,fp=0,tn=0,u=0;const bc={[TA]:[0,0],[TB]:[0,0],[TC]:[0,0]};
+ rows.forEach(r=>{if(!bc[r.gt]){u++;return}const w=W(r);bc[r.gt][0]++;if(w)bc[r.gt][1]++;if(r.gt==TC){w?fp++:tn++}else{w?tp++:fn++}});
+ return u==rows.length?null:{tp,fn,fp,tn,u,bc,det:tp+fn?tp/(tp+fn):null,fa:fp+tn?fp/(fp+tn):null}}
+const P=x=>x==null?'hesaplanamadı':'% '+(x*100).toFixed(1).replace('.',',');
+function drawVal(){const el=$('valbox');if(!rows){el.innerHTML='<div class="info">Önce analizi başlatın.</div>';return}
+ const ns=rows.filter(r=>r.sg).length;ev=evaluate();
+ let h=`<p>Kontrollü deneyde gerçek durum bilinir. Burada VeriCheck’in uyarıları gerçek durumla karşılaştırılır.</p><p>Dosya adından öneri üretilebilen çift: <b>${ns}</b> · Gerçek durumu girilmiş çift: <b>${rows.length-(ev?ev.u:rows.length)}</b></p>`;
+ if(!ns)h+='<div class="warn">Dosya adları SINIF_YAPRAKID_FOTOID düzeninde olmadığı için öneri üretilemedi.</div>';
+ h+=`<label><input type="checkbox" id="ok" ${ns?'':'disabled'}> Dosya adlarından gelen önerileri kontrol ettim ve doğru buluyorum.</label><br>
+ <button class="btn pri" id="ap" disabled>Önerileri gerçek durum olarak kullan</button> <button class="btn" id="cl">Gerçek durumları temizle</button>
+ <br><label><input type="checkbox" id="im" ${inclMid?'checked':''}> “Orta düzey benzerlik” durumunu da uyarı say</label>`;
+ if(ev){const X=[['Doğru uyarı sayısı',ev.tp,'Gerçekte benzer olan çifte VeriCheck de uyarı verdi.'],['Kaçırılan benzer çift sayısı',ev.fn,'Gerçekte benzer olan çifte uyarı verilmedi.'],['Yanlış uyarı sayısı',ev.fp,'Gerçekte farklı yapraklar olan çifte yine de uyarı verildi (yanlış alarm).'],
+  ['Tespit oranı',P(ev.det),'Gerçekte benzer çiftlerin yüzde kaçına uyarı verildi? = doğru uyarı ÷ (doğru uyarı + kaçırılan).'],['Yanlış alarm oranı',P(ev.fa),'Gerçekte farklı çiftlerin yüzde kaçına gereksiz uyarı verildi? = yanlış uyarı ÷ (yanlış uyarı + doğru sessizlik).']];
+  h+=(ev.u?`<div class="warn">${ev.u} çiftin gerçek durumu girilmedi; değerlendirmeye katılmadı.</div>`:'')+`<div class="grid">${X.map(x=>`<div class="m"><b>${x[1]}</b>${x[0]}<details><summary>Bu ne demek?</summary><span class="cap">${x[2]}</span></details></div>`).join('')}</div>
+  <table><tr><th>Gerçek durum</th><th>Çift</th><th>Uyarı verilen</th></tr>${Object.entries(ev.bc).map(([k,v])=>`<tr><td>${k}</td><td>${v[0]}</td><td>${v[1]}</td></tr>`).join('')}</table>
+  <p class="cap">Sonuçlar girilen gerçek durumlara ve pilot eşiklere göre hesaplanır; kontrollü deneyle birlikte yorumlanmalıdır.</p>`}
+ h+=`<details class="card"><summary>✎ Görüntü çiftlerini tek tek doğrula</summary><p class="cap">Öneriler otomatik karar değildir. Gerçek durumu siz belirleyin.</p><div class="truth-list">${rows.slice(0,250).map((r,i)=>`<label class="truth-row"><span>${esc(r.a.name)} ↔ ${esc(r.b.name)}</span><select data-truth="${i}"><option value="">Henüz doğrulanmadı</option><option value="${TA}">A · Aynı görüntü</option><option value="${TB}">B · Aynı yaprak, farklı çekim</option><option value="${TC}">C · Farklı yaprak</option></select></label>`).join('')}</div>${rows.length>250?'<p class="cap">İlk 250 çift gösteriliyor. Büyük veri kümeleri için CSV üzerinden kayıtları inceleyin.</p>':''}</details>`;
+  el.innerHTML=h;el.querySelectorAll('[data-truth]').forEach(sel=>{sel.value=rows[+sel.dataset.truth].gt;sel.onchange=()=>{rows[+sel.dataset.truth].gt=sel.value;drawVal()}});$('ok').onchange=e=>$('ap').disabled=!e.target.checked;
+ $('ap').onclick=()=>{rows.forEach(r=>{if(!r.gt&&r.sg)r.gt=r.sg});drawVal()};$('cl').onclick=()=>{rows.forEach(r=>r.gt='');drawVal()};$('im').onchange=e=>{inclMid=e.target.checked;drawVal()}}
+
+// ---- Rapor ----
+['Kodlama desteği','Hata ayıklama','Arayüz geliştirme','Kod açıklaması','Diğer'].forEach(x=>$('aiP').insertAdjacentHTML('beforeend',`<label><input type="checkbox" name="ap" value="${x}"> ${x}</label> `));
+['Araştırma sorusunun belirlenmesi','Literatür taraması','Deney tasarımı','Veri üretimi','Görüntülerin etiketlenmesi','Testlerin yürütülmesi','Sonuçların yorumlanması','Yazılımın test edilmesi'].forEach(x=>$('aiC').insertAdjacentHTML('beforeend',`<label><input type="checkbox" name="ac" value="${x}"> ${x}</label><br>`));
+const chk=n=>[...document.querySelectorAll(`input[name=${n}]:checked`)].map(x=>x.value).join(', ')||'doldurulmadı';
+function csv(){return'training_file,test_file,exact_match,phash_distance,review_status,ground_truth,correct_warning\n'+rows.map(r=>{
+ const w=['E','H'].concat(inclMid?['M']:[]).includes(status(r)),pos=r.gt==TA||r.gt==TB;
+ const cw=!r.gt?'':pos?(w?'Doğru uyarı':'Kaçırılan benzer çift'):(w?'Yanlış alarm':'Doğru sessizlik');
+ return[r.a.name,r.b.name,r.ex,r.d,ST[status(r)],r.gt,cw].map(x=>'"'+String(x).replace(/"/g,'""')+'"').join(',')}).join('\n')}
+function drawRep(){const el=$('rep');if(!rows){el.innerHTML='<div class="info">Rapor için önce analizi başlatın.</div>';return}
+ ev=evaluate();const c={E:0,H:0,M:0,N:0};rows.forEach(r=>c[status(r)]++);
+ const S=[['Eğitim görüntüsü sayısı',tr.length],['Test görüntüsü sayısı',te.length],['Toplam karşılaştırma',rows.length],['Birebir aynı dosya sayısı',c.E],['İncelenmesi önerilen çift sayısı',c.E+c.H],['Kullanılan benzerlik yöntemi','SHA-256 (birebir aynılık) + görsel parmak izi / pHash'],['Kullanılan inceleme eşiği',`Yüksek olabilir: mesafe ≤ ${hi}; orta düzey: ≤ ${mid} (pilot değerleri)`],
+  ['Tespit oranı',ev?P(ev.det):'gerçek durum girilmedi'],['Yanlış alarm oranı',ev?P(ev.fa):'gerçek durum girilmedi']];
+ el.innerHTML=`<table>${S.map(x=>`<tr><th>${x[0]}</th><td>${esc(x[1])}</td></tr>`).join('')}</table>
+ <p class="cap">VeriCheck yardımcı bir kontrol aracıdır; kesin karar vermez. Benzerlikler yalnızca incelenmesi önerilen durumlardır ve kontrollü deney sonucu ile doğrulanmalıdır.</p>
+ <h3>CSV</h3><textarea id="cs" rows="6" readonly>${esc(csv())}</textarea><p><button class="btn pri" id="cp">CSV’yi kopyala</button> <span class="cap" id="cpm">Kopyalayıp Excel veya Not Defteri’ne yapıştırın, .csv olarak kaydedin.</span></p>`;
+ $('cp').textContent='↓ CSV indir';$('cp').onclick=()=>{const blob=new Blob(['\uFEFF'+csv()],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='VeriCheck_sonuclar.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$('cpm').textContent='CSV dosyası indirildi.'};const print=document.createElement('button');print.className='btn';print.textContent='▤ Raporu yazdır';print.onclick=()=>window.print();$('cp').parentElement.append(print)}
+
+// ---- Nasıl çalışıyor ----
+const STEPS=[['Görüntüler yükleniyor','Dosyaları okur, bozuk/boş/desteklenmeyenleri ayıklar.','Hatalı bir dosya analizi bozmasın diye.','Kontrol edilmiş eğitim ve test listeleri.'],
+['Birebir aynılık kontrol ediliyor','Her dosyanın dijital parmak izini (SHA-256) çıkarır ve karşılaştırır.','Aynı dosyanın hem eğitimde hem testte olması başarıyı yanıltabilir.','“Birebir aynı” çiftler. SHA-256 görsel benzerliği ölçmez.'],
+['Görsel parmak izleri çıkarılıyor','Görüntüyü gri yapıp küçültür, genel görünümünü 64 tane 0/1 ile özetler.','Aynı yaprağın farklı çekimleri birebir aynı dosya olmaz ama benzer görünebilir.','Her görüntü için bir görsel parmak izi.'],
+['Eğitim ve test karşılaştırılıyor','Her eğitim görüntüsünü her test görüntüsüyle karşılaştırır, farklı hane sayısını sayar.','Hangi çiftlerin görünümünün yakın olduğunu sayıyla göstermek için.','Her çift için mesafe (0 = çok benzer).'],
+['Benzer çiftler listeleniyor','Mesafeyi sizin eşiklerinizle karşılaştırır.','Önce incelenecek çiftleri öne çıkarmak için.','“Benzerlik yüksek olabilir – inceleyin” gibi ihtiyatlı durumlar.'],
+['Sonuçlar gösteriliyor','Çiftleri yan yana kartlar ve grafikle gösterir.','Sonuçları gözle de kontrol edebilmek için.','Kartlar, grafik, CSV, rapor.'],
+['Doğruluk test ediliyor','Uyarıları bildiğiniz gerçek durumla karşılaştırır.','VeriCheck’in kendisinin ne kadar güvenilir olduğunu ölçmek için.','Doğru uyarı, kaçırılan, yanlış alarm; tespit ve yanlış alarm oranı.']];
+const GL={'Eğitim verisi':'Modelin öğrenirken kullandığı görüntüler.','Test verisi':'Öğrenileni ölçmek için kullanılan, öğrenme sırasında görülmemesi gereken görüntüler.','Görüntü sınıflandırma':'Bir görüntünün hangi gruba ait olduğunu bilgisayarın tahmin etmesi.','Doğruluk':'Modelin test görüntülerinin yüzde kaçında doğru tahmin yaptığı.','Aynı görüntü':'Aynı fotoğrafın tekrar kullanılması; dosyalar birebir aynıdır.','Benzer görüntü':'Birebir aynı olmasa da görünümü çok yakın görüntüler.','Veri sızıntısı':'Eğitimdeki bilginin test aşamasına karışması; ölçülen başarıyı gerçeğinden yüksek gösterebilir. VeriCheck bunu kesin söylemez, yalnızca incelenecek çiftleri gösterir.','Dijital parmak izi':'Dosyanın birebir kimliği (SHA-256).','Görsel parmak izi':'Görüntünün genel görünümünü özetleyen 64 haneli 0/1 dizisi; benzer görüntülerde birbirine yakındır.','Yanlış alarm':'Gerçekte farklı iki görüntü için “benzer” uyarısı verilmesi.'};
+$('how').innerHTML=STEPS.map((s,i)=>`<div class="card"><b>${i+1}. ${s[0]}</b><br><b>NE YAPIYOR?</b> ${s[1]}<br><b>NEDEN YAPIYOR?</b> ${s[2]}<br><b>SONUÇTA NE ÜRETİYOR?</b> ${s[3]}</div>`).join('')+'<h3>Sözlük</h3>'+Object.entries(GL).map(([k,v])=>`<details><summary>${k}</summary>${v}</details>`).join('');
+show(0);
+function updateNet(){const el=$('net');el.textContent=navigator.onLine?'● Hazır':'● Çevrimdışı';}window.addEventListener('online',updateNet);window.addEventListener('offline',updateNet);updateNet();
+if('serviceWorker' in navigator && location.protocol!=='file:')navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+</script>
+<script>
+// Öğrenci Modu: araştırmacı motorunu değiştirmeden basitleştirilmiş akış.
+let studentEnabled=true;
+function studentMode(on){studentEnabled=on;document.body.classList.toggle('student-mode',on);$('studentModeBtn').classList.toggle('active',on);$('researchModeBtn').classList.toggle('active',!on);if(!on)show(currentTab);else{studentSync();window.scrollTo(0,0)}}
+$('studentModeBtn').onclick=()=>studentMode(true);
+$('researchModeBtn').onclick=()=>studentMode(false);
+const oldUpdateHome=updateHome;
+updateHome=function(){oldUpdateHome();studentSync()};
+function studentSync(){if(!$('sTrain'))return;$('sTrain').textContent=tr.length;$('sTest').textContent=te.length;$('sAnalyze').disabled=!(tr.length&&te.length);$('sUploadHint').textContent=tr.length&&te.length?`${tr.length*te.length} görüntü çifti karşılaştırmaya hazır.`:'İki gruba da en az bir fotoğraf ekle.'}
+$('sClear').onclick=()=>{if(!confirm('Yüklenen fotoğraflar temizlensin mi?'))return;[...tr,...te].forEach(x=>URL.revokeObjectURL(x.url));tr=[];te=[];rows=null;renderUploads();studentSync();$('studentOutput').classList.add('student-hidden');$('studentInput').classList.remove('student-hidden')};
+$('sAnalyze').onclick=async()=>{if(!tr.length||!te.length)return;const b=$('sAnalyze');b.disabled=true;b.textContent='Karşılaştırılıyor…';rows=[];for(let i=0;i<tr.length;i++){for(let j=0;j<te.length;j++){const a=tr[i],c=te[j],ex=a.sha===c.sha;rows.push({a,b:c,ex,d:dist(a.h,c.h),sg:sugg(a,c,ex),gt:''})}await new Promise(r=>setTimeout(r,0))}b.textContent='Yaprakları karşılaştır →';b.disabled=false;studentRender();$('studentInput').classList.add('student-hidden');$('studentOutput').classList.remove('student-hidden');$('st1').classList.remove('active');$('st2').classList.remove('active');$('st3').classList.add('active');$('studentOutput').scrollIntoView({behavior:'smooth',block:'start'})};
+function studentRender(){if(!rows)return;const exact=rows.filter(r=>r.ex).length,review=rows.filter(r=>!r.ex&&r.d<=hi).length;const done=rows.filter(r=>r.gt).length;
+$('sSummary').innerHTML=`<div><b>${rows.length}</b>Çift</div><div><b>${exact}</b>Aynı dosya</div><div><b>${review}</b>İncele</div>`;
+const limit=60;$('sPairs').innerHTML=rows.slice(0,limit).map((r,i)=>{const label=r.ex?'Dosyalar birebir aynı':r.d<=hi?'Benzer olabilir · incele':r.d<=mid?'Yakınlık var · incele':'Belirgin yakınlık bulunmadı';const note=r.ex?'SHA-256 eşleşti.':r.d===0?'Görünüm aynı; dosya baytları farklı.':'Görsel mesafe: '+r.d+' / 64';return `<article class="student-result"><div class="photos"><div><div class="photo-label">EĞİTİM</div><img alt="Eğitim yaprağı" src="${r.a.url}"></div><div><div class="photo-label">TEST</div><img alt="Test yaprağı" src="${r.b.url}"></div></div><h3>Karşılaştırma ${i+1}</h3><span class="result-pill ${!r.ex&&r.d<=mid?'alert':''}">${label}</span><div class="meta">${note}</div><label style="font-size:12px;font-weight:750;color:#245d3d" for="truth-${i}">Gerçekte bu fotoğraflar nasıl ilişkili?</label><select id="truth-${i}" data-index="${i}"><option value="">Seçerek doğrula</option><option value="${TA}" ${r.gt===TA?'selected':''}>Aynı fotoğraf</option><option value="${TB}" ${r.gt===TB?'selected':''}>Aynı yaprak, farklı çekim</option><option value="${TC}" ${r.gt===TC?'selected':''}>Farklı yaprak</option></select></article>`}).join('')+(rows.length>limit?`<p class="student-hint">İlk ${limit} çift gösteriliyor. Tüm çiftler Araştırmacı Modu'nda incelenebilir.</p>`:'')+`<div class="student-hint">${done}/${rows.length} çift doğrulandı. Araştırmacı Modu'nda ayrıntılı ölçümler ve CSV raporu bulunur.</div>`;
+$('sPairs').querySelectorAll('select').forEach(el=>el.onchange=()=>{rows[+el.dataset.index].gt=el.value;studentRender()});}
+$('sAgain').onclick=()=>{$('studentOutput').classList.add('student-hidden');$('studentInput').classList.remove('student-hidden');$('st3').classList.remove('active');$('st1').classList.add('active');window.scrollTo(0,0)};
+$('sReport').onclick=()=>{studentMode(false);show(6)};
+studentMode(true);
+</script>
+</body></html>
