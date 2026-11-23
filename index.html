@@ -132,7 +132,13 @@ body.student-mode.v5-compare .v5-home{display:none!important}
 body.student-mode.v5-compare .v5-back{display:block!important}
 body.student-mode:not(.v5-compare):not(.aw-open) .v5-back{display:none!important}
 @media(max-width:380px){.v5-choice{min-height:150px;padding:13px 10px}.v5-choice strong{font-size:16px}body.student-mode .student-pick{grid-template-columns:1fr!important}}
-</style></head><body><main>
+</style><style>
+#vcUpdate{position:fixed;top:calc(10px + env(safe-area-inset-top));left:12px;right:12px;z-index:9999;background:#fff;border:2px solid #278f60;border-radius:15px;padding:12px;box-shadow:0 8px 25px #153d2850;color:#193d2d;display:none;align-items:center;gap:10px;font:600 13px system-ui}
+#vcUpdate button{border:0;background:#278f60;color:white;padding:11px 14px;border-radius:10px;font-weight:800;cursor:pointer;white-space:nowrap}
+#vcUpdate small{display:block;color:#577763;font-weight:400}
+#vcVersion{font:600 10px system-ui;color:#6c8874;margin-left:6px}
+</style>
+</head><body><div id="vcUpdate" role="status" aria-live="polite"><div style="flex:1">Yeni sürüm hazır<small>Güncellemek için dokunun.</small></div><button id="vcUpdateBtn" type="button">Güncelle</button></div><main>
 <header class="apphead"><div class="brandmark">V<span>✓</span></div><div><strong>VERICHECK</strong><small>Görüntü güvenilirliği laboratuvarı</small></div><span class="offline-pill" id="net">● Hazır</span></header><nav id="nav"></nav><div class="mobile-title" id="mobileTitle"></div>
 
 
@@ -410,6 +416,41 @@ studentMode(true);
  document.getElementById('v5AwBack').onclick=home;
  document.getElementById('studentModeBtn').addEventListener('click',home);
  document.getElementById('researchModeBtn').addEventListener('click',()=>document.body.classList.remove('v5-compare','aw-open'));
+})();
+</script>
+<script>
+// VeriCheck v7: SW sürüm bildirimi. Kullanıcı onayı olmadan sayfayı yenilemez.
+(()=>{
+ const version='v7', banner=document.getElementById('vcUpdate');
+ const btn=document.getElementById('vcUpdateBtn');
+ if(!('serviceWorker' in navigator)||location.protocol==='file:')return;
+ let pending=null, refreshing=false;
+ const offer=(reg)=>{if(reg&&reg.waiting&&navigator.serviceWorker.controller){pending=reg.waiting;banner.style.display='flex';}};
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{
+  if(refreshing)return;refreshing=true;location.reload();
+ });
+ btn.addEventListener('click',()=>{
+  if(!pending)return;
+  // The app holds experiment results in memory; warn before reload.
+  if(!confirm('Güncelleme sayfayı yeniden açacak. İndirmediğiniz deney sonuçları kaybolabilir. Devam edilsin mi?'))return;
+  btn.disabled=true;btn.textContent='Güncelleniyor…';
+  pending.postMessage({type:'SKIP_WAITING'});
+  setTimeout(()=>{if(!refreshing)location.reload()},4500);
+ });
+ const watch=reg=>{
+  offer(reg);
+  reg.addEventListener('updatefound',()=>{
+   const sw=reg.installing;if(!sw)return;
+   sw.addEventListener('statechange',()=>{if(sw.state==='installed')offer(reg)});
+  });
+ };
+ navigator.serviceWorker.ready.then(reg=>{
+  watch(reg);
+  const check=()=>{if(navigator.onLine)reg.update().catch(()=>{})};
+  check();
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()});
+  window.addEventListener('online',check);
+ }).catch(()=>{});
 })();
 </script>
 </body></html>
